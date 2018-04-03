@@ -4,6 +4,17 @@
 
 pragma solidity ^0.4.0 ;
 
+contract Projectfactory {
+    address[] public deployedProjects;
+    function createProject() public {
+        address newProject = new GruntFund();
+        deployedProjects.push(newProject);
+    }
+    function getDeployedCampaigns() public view returns(address[]){
+        return deployedProjects;
+    }
+}
+
 contract GruntFund {
     struct Deliverable {
             address createdBy;
@@ -84,3 +95,6 @@ contract GruntFund {
     }
 
 }
+
+
+

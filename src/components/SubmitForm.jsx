@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'antd';
 import { withState, compose, withHandlers } from 'recompose';
-import instance from '../instance';
+import { projectInstance } from '../instances';
 import web3 from '../web3';
 
 const Submit = ({
@@ -62,20 +62,25 @@ const Submit = ({
 export default compose(
   withState('taskDescription', 'onChange', ''),
   withState('loading', 'handleLoading', false),
+
   withHandlers({
     sendTask: ({
       handleLoading,
       taskDescription,
       getTasks,
-      onChange
+      onChange,
+      address
     }) => async e => {
       e.preventDefault();
       handleLoading(true);
       try {
         const accounts = await web3.eth.getAccounts();
-        await instance.methods.addDeliverable(taskDescription).send({
-          from: accounts[0]
-        });
+        await projectInstance(address)
+          .methods.addDeliverable(taskDescription)
+          .send({
+            from: accounts[0],
+            gas: 2000000
+          });
         await getTasks();
 
         onChange('');
