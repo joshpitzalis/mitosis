@@ -12,16 +12,25 @@ contract GruntFund {
             uint approvals;
             mapping (address => bool) moderators;
             bool completed;
+            
         }
+
+
+        function ProjectGrunt () public {
+      
+       
+        totalTimeList.push(msg.sender);
+        totalTime.[msg.sender] = 1;
+   }
 
     mapping (uint => Deliverable) public pendingDeliverables;
     uint[] public pendingDeliverableList;
-
+    
     mapping (address => uint) public totalTime;
     address[] public totalTimeList;
 
     function getVersion() public pure returns (string) {
-        return 'version 0.0.3';
+        return 'version 0.0.4';
     }
 
     function getPendingDeliverableList() public view returns (uint[]) {
@@ -52,10 +61,12 @@ contract GruntFund {
     }
 
     function approveDeliverable(uint _deliverableId) public returns(address) {
-        // tk make sure they haven't voted before
-        // tk make sure if not already complete
+        
         Deliverable storage existingTask = pendingDeliverables[_deliverableId];
-        existingTask.approvals += 1;
+        require(!totalTime[exisitingTask.createdBy]>=1);
+        require(!existingTask.completed);
+        require(!existingTask.moderators[msg.sender]);
+        existingTask.approvals += totalTime[msg.sender];
         existingTask.moderators[msg.sender] = true;
         pendingDeliverables[_deliverableId] = existingTask;
         finalise(_deliverableId,  existingTask.createdBy);
