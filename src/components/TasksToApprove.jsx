@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'antd';
 import { compose, withHandlers } from 'recompose';
-import instance from '../instance';
+import { gruntInstance } from '../instances';
 import web3 from '../web3';
 
 const Tasks = ({ tasks, approveTask }) => {
@@ -59,7 +59,7 @@ export default compose(
     approveTask: ({ getTasks }) => async taskId => {
       try {
         const accounts = await web3.eth.getAccounts();
-        await instance.methods.approveDeliverable(taskId).send({
+        await gruntInstance.methods.approveDeliverable(taskId).send({
           from: accounts[0]
         });
         await getTasks();

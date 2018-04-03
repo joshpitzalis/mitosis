@@ -4,9 +4,10 @@ import Stats from '../components/Stats';
 import Submit from '../components/SubmitForm';
 import Tasks from '../components/TasksToApprove';
 import { List, Divider } from 'antd';
-import instance from '../instance';
+import { projectInstance } from '../instances';
+import { Inbox } from '../components/Inbox';
 
-class App extends Component {
+export default class App extends Component {
   state = {
     balance: 0
   };
@@ -18,13 +19,18 @@ class App extends Component {
     //   .call()
     //   .then(res => console.log(res));
 
-    instance.methods
-      .getSummary('0x23BA231Ab7976880d322b604a6C90F94fa541d81')
+    projectInstance(this.props.match.params.address)
+      .methods.getSummary(`${this.props.match.params.address}`)
       .call()
       .then(totalHours => this.setState({ totalHours }));
 
-    instance.methods
-      .getSummaryList()
+    // gruntInstance.methods
+    //   .getSummary('0x23BA231Ab7976880d322b604a6C90F94fa541d81')
+    //   .call()
+    //   .then(totalHours => this.setState({ totalHours }));
+
+    projectInstance(this.props.match.params.address)
+      .methods.getSummaryList()
       .call()
       .then(grunts => {
         this.setState({ grunts });
@@ -33,8 +39,8 @@ class App extends Component {
       .then(grunts =>
         Promise.all(
           grunts.map(key =>
-            instance.methods
-              .totalTime(key)
+            projectInstance(this.props.match.params.address)
+              .methods.totalTime(key)
               .call()
               .catch(err => console.error(err))
           )
@@ -49,8 +55,8 @@ class App extends Component {
   }
 
   getFreshTasks = async () => {
-    const taskKeys = await instance.methods
-      .getPendingDeliverableList()
+    const taskKeys = await projectInstance(this.props.match.params.address)
+      .methods.getPendingDeliverableList()
       .call()
       .catch(err => console.error(err));
 
@@ -58,8 +64,8 @@ class App extends Component {
 
     const tasks = await Promise.all(
       taskKeys.map(key =>
-        instance.methods
-          .getPendingDeliverable(key)
+        projectInstance(this.props.match.params.address)
+          .methods.getPendingDeliverable(key)
           .call()
           .catch(err => console.error(err))
       )
@@ -108,6 +114,7 @@ class App extends Component {
 
     return (
       <div className="sans-serif pa5">
+        {/* <Inbox /> */}
         <Stats
           totalHours={this.state.totalHours}
           completed={
@@ -168,10 +175,11 @@ class App extends Component {
           </h1>
         )}
         <Divider />
-        <Submit getTasks={this.getFreshTasks} />
+        <Submit
+          getTasks={this.getFreshTasks}
+          address={this.props.match.params.address}
+        />
       </div>
     );
   }
 }
-
-export default App;

@@ -8,7 +8,7 @@ const provider = new HDWalletProvider(
 
 const web3 = new Web3(provider);
 // const web3 = require('./web3');
-const gruntFund = require('./src/build/gruntFund.json');
+const factory = require('./src/build/Projectfactory.json');
 
 // const { bytecode } = require('./contracts/gruntFund_sol_GruntFund.bin');
 // const { interface } = require('./contracts/gruntFund_sol_GruntFund.bin');
@@ -21,9 +21,9 @@ const deploy = async () => {
 
     console.log('Attempting to deploy from account', accounts[0]);
 
-    const result = await new web3.eth.Contract(JSON.parse(gruntFund.interface))
-      .deploy({ data: gruntFund.bytecode })
-      .send({ gas: '1000000', from: accounts[0] })
+    const result = await new web3.eth.Contract(JSON.parse(factory.interface))
+      .deploy({ data: factory.bytecode })
+      .send({ gas: '2000000', from: accounts[0] })
       .catch(err => console.log('err', err));
 
     console.log('Contract deployed to', result.options.address);
