@@ -30,7 +30,8 @@ contract GruntFund {
     address[] public totalTimeList;
 
     function getVersion() public pure returns (string) {
-        return "version 0.0.4";
+                    return "version 0.0.4";
+
     }
 
     function getPendingDeliverableList() public view returns (uint[]) {
