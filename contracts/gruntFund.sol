@@ -7,13 +7,14 @@ pragma solidity ^0.4.0 ;
 contract Projectfactory {
     address[] public deployedProjects;
     function createProject() public {
-        address newProject = new GruntFund();
+        address newProject = new GruntFund(msg.sender);
         deployedProjects.push(newProject);
     }
     function getDeployedCampaigns() public view returns(address[]){
         return deployedProjects;
     }
 }
+
 
 contract GruntFund {
     struct Deliverable {
@@ -28,10 +29,10 @@ contract GruntFund {
     }
 
 
-    function GruntFund () public {
-        totalTimeList.push(msg.sender);
-        totalTime[address(this)] = 1;
-        totalTime[msg.sender] = 1;
+    function GruntFund (address _creator) public {
+        totalTimeList.push(_creator);
+        totalTime[address(this)] = 2;
+        totalTime[_creator] = 2;
     }
 
     mapping (uint => Deliverable) public pendingDeliverables;
@@ -41,8 +42,7 @@ contract GruntFund {
     address[] public totalTimeList;
 
     function getVersion() public pure returns (string) {
-                    return "version 0.0.4";
-
+        return "version 0.0.5";
     }
 
     function getPendingDeliverableList() public view returns (uint[]) {
@@ -72,7 +72,6 @@ contract GruntFund {
             rejects: 0,
             completed: false, 
             rejected: false
-
         });
         pendingDeliverables[id] = newTask;
         pendingDeliverableList.push(id);
@@ -81,7 +80,6 @@ contract GruntFund {
     /// @notice Approving based on weight. 3 requires allow to check if the person voting is a grunt, if the task is completed and if has already voted.
     /// @return true if Bugs will eat it, false otherwise
     function approveDeliverable(uint _deliverableId) public returns(address) {
-        
         Deliverable storage existingTask = pendingDeliverables[_deliverableId];
         require(totalTime[msg.sender]>=1);
         require(!existingTask.completed && !existingTask.rejected);

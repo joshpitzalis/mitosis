@@ -5,7 +5,6 @@ import Submit from '../components/SubmitForm';
 import Tasks from '../components/TasksToApprove';
 import { List, Divider } from 'antd';
 import { projectInstance } from '../instances';
-import { Inbox } from '../components/Inbox';
 
 export default class App extends Component {
   state = {
@@ -118,7 +117,6 @@ export default class App extends Component {
 
     return (
       <div className="sans-serif pa5">
-        {/* <Inbox /> */}
         <Stats
           totalHours={this.state.totalHours}
           completed={
@@ -171,6 +169,7 @@ export default class App extends Component {
           <Tasks
             tasks={this.state.tasks.filter(task => task[4] === false)}
             getTasks={this.getFreshTasks}
+            address={this.props.match.params.address}
           />
         ) : (
           <h1 className="tc">

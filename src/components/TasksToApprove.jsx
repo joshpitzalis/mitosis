@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button } from 'antd';
 import { compose, withHandlers } from 'recompose';
-import { gruntInstance } from '../instances';
+import { projectInstance } from '../instances';
 import web3 from '../web3';
 
-const Tasks = ({ tasks, approveTask }) => {
+const Tasks = ({ tasks, approveTask, address }) => {
   return (
     <div className="pa4">
       <h2 className="App-title f3 tc">Work To Approve</h2>
@@ -56,12 +56,14 @@ const Tasks = ({ tasks, approveTask }) => {
 
 export default compose(
   withHandlers({
-    approveTask: ({ getTasks }) => async taskId => {
+    approveTask: ({ getTasks, address }) => async taskId => {
       try {
         const accounts = await web3.eth.getAccounts();
-        await gruntInstance.methods.approveDeliverable(taskId).send({
-          from: accounts[0]
-        });
+        await projectInstance(address)
+          .methods.approveDeliverable(taskId)
+          .send({
+            from: accounts[0]
+          });
         await getTasks();
       } catch (err) {
         console.error(err);
