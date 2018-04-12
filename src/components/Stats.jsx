@@ -3,7 +3,7 @@ import React from 'react';
 const Stats = ({ totalHours, completed, tasks, gruntCount, balance }) => {
   return (
     <article className="pa3 pa5-ns" data-name="slab-stat">
-      <h1>Today</h1>
+      <h1>The Local Food Project</h1>
       <dl className="dib mr5">
         <dd className="f6 f5-ns b ml0">Total Hours</dd>
         <dd className="f3 f2-ns b ml0">{totalHours}</dd>
@@ -28,7 +28,7 @@ const Stats = ({ totalHours, completed, tasks, gruntCount, balance }) => {
         <dd className="f6 f5-ns b ml0">Project Link</dd>
         <dd className="f3 f2-ns b ml0">
           <small>
-            <a href="">https://github.com/joshpitzalis/mitosis</a>
+            <a href="">https://workflowy.com/s/C_Yv.YUjxnt5doU</a>
           </small>
         </dd>
       </dl>
