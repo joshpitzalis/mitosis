@@ -83,10 +83,10 @@ describe('Grunt Fund', () => {
     assert.ok(gruntFund.options.address);
   });
 
-  it('automatically starts the creator with 2 hours of equity', async () => {
+  it('automatically starts the creator with 1 hour of equity', async () => {
     const grunts = await gruntFund.methods.getSummaryList().call();
     const creatorEquity = await gruntFund.methods.getSummary(grunts[0]).call();
-    assert.equal(creatorEquity, 2);
+    assert.equal(creatorEquity, 1);
   });
 
   it('adds a task to the task list', async () => {
@@ -108,7 +108,7 @@ describe('Grunt Fund', () => {
 
   it('checks if initialization of time is complete', async () => {
     const time = await gruntFund.methods.totalTime(accounts[0]).call();
-    assert.equal(time, 2);
+    assert.equal(time, 1);
   });
   //approve test : check if it approves based on weight
   it('approves a task from the list', async () => {
@@ -155,6 +155,44 @@ describe('Grunt Fund', () => {
       .call();
 
     assert.ok(task['6']);
+  });
+
+  it('if the creator adds a task after creating the contract the total number of grunts remains one', async () => {
+    await gruntFund.methods.addDeliverable('test task').send({
+      gas: '1000000',
+      from: accounts[0]
+    });
+    const taskIndices = await gruntFund.methods
+      .getPendingDeliverableList()
+      .call();
+
+    await gruntFund.methods.approveDeliverable(taskIndices[0]).send({
+      gas: '1000000',
+      from: accounts[0]
+    });
+
+    const ArrayOfAllGrunts = await gruntFund.methods.getSummaryList().call();
+
+    assert.equal(ArrayOfAllGrunts.length, 1);
+  });
+
+  it('if someone new adds a task after creating the contract the total number of grunts becomes two', async () => {
+    await gruntFund.methods.addDeliverable('test task').send({
+      gas: '1000000',
+      from: accounts[1]
+    });
+    const taskIndices = await gruntFund.methods
+      .getPendingDeliverableList()
+      .call();
+
+    await gruntFund.methods.approveDeliverable(taskIndices[0]).send({
+      gas: '1000000',
+      from: accounts[0]
+    });
+
+    const ArrayOfAllGrunts = await gruntFund.methods.getSummaryList().call();
+    console.log('ArrayOfAllGrunts', ArrayOfAllGrunts);
+    assert.equal(ArrayOfAllGrunts.length, 2);
   });
 
   // it('approves a pending deliverable', async () => {
