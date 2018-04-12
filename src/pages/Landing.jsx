@@ -60,8 +60,6 @@ export default class App extends Component {
       .call()
       .catch(err => console.error(err));
 
-    console.log('taskKeys', taskKeys);
-
     const tasks = await Promise.all(
       taskKeys.map(key =>
         projectInstance(this.props.match.params.address)
@@ -106,7 +104,13 @@ export default class App extends Component {
             1: '#c5d2b2',
             2: '#dda078',
             3: '#a32d26',
-            4: '#4eb3c2'
+            4: '#4eb3c2',
+
+            5: '#F56416',
+            6: '#5F464B',
+            7: '#093824',
+            8: '#084887',
+            9: '#031927'
           }[index],
           value: +time
         };
