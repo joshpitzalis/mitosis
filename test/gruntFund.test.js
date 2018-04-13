@@ -191,7 +191,7 @@ describe('Grunt Fund', () => {
     });
 
     const ArrayOfAllGrunts = await gruntFund.methods.getSummaryList().call();
-    console.log('ArrayOfAllGrunts', ArrayOfAllGrunts);
+
     assert.equal(ArrayOfAllGrunts.length, 2);
   });
 

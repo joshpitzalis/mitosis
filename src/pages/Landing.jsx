@@ -71,14 +71,6 @@ export default class App extends Component {
   };
 
   render() {
-    // const color = index => {{
-    //   0: '#dfa440',
-    //   1: '#c5d2b2',
-    //   2: '#dda078',
-    //   3: '#a32d26',
-    //   4: '#4eb3c2'
-    // }[index];}
-
     const data =
       this.state.grunts &&
       this.state.grunts.map((grunt, index) => {
@@ -165,9 +157,14 @@ export default class App extends Component {
         </div>
 
         <Divider />
-        {this.state.tasks && this.state.tasks.length > 0 ? (
+        {this.state.tasks &&
+        this.state.tasks.filter(task => task[4] === false && task[6] === false)
+          .length > 0 ? (
           <Tasks
-            tasks={this.state.tasks.filter(task => task[4] === false)}
+            // @notice task[4 and 6] mean approved and rejected, so filter out any task that have been approved or rejected
+            tasks={this.state.tasks.filter(
+              task => task[4] === false && task[6] === false
+            )}
             getTasks={this.getFreshTasks}
             address={this.props.match.params.address}
           />

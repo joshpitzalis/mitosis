@@ -14,7 +14,7 @@ const Submit = ({
   sendTask
 }) => {
   return (
-    <div className="pa4-l">
+    <div className="pa4-l" data-test="submitForm">
       <form
         className="mw7 center pa4 br2-ns ba b--black-10"
         onSubmit={sendTask}
@@ -28,6 +28,7 @@ const Submit = ({
               Task
             </label>
             <input
+              data-test="addTaskInput"
               className="f6 f5-l input-reset fl black-80 bg-white pa3 lh-solid w-100  br2-ns "
               placeholder=" Task Description"
               type="text"
@@ -36,11 +37,7 @@ const Submit = ({
               id="email-address"
               onChange={e => onChange(e.target.value)}
             />
-            {/* <input
-                className="f6 f5-l button-reset fl pv3 tc bn bg-animate bg-black-70 hover-bg-black white pointer w-100 w-25-m w-20-l br2-ns br--right-ns"
-                type="submit"
-                value="Subscribe"
-              /> */}
+
             <br />
             <br />
             <br />
