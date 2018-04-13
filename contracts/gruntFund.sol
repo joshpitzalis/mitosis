@@ -4,6 +4,18 @@
 
 pragma solidity ^0.4.0 ;
 
+contract Projectfactory {
+    address[] public deployedProjects;
+    function createProject() public {
+        address newProject = new GruntFund(msg.sender);
+        deployedProjects.push(newProject);
+    }
+    function getDeployedCampaigns() public view returns(address[]){
+        return deployedProjects;
+    }
+}
+
+
 contract GruntFund {
     struct Deliverable {
         address createdBy;
@@ -17,10 +29,10 @@ contract GruntFund {
     }
 
 
-    function GruntFund () public {
-        totalTimeList.push(msg.sender);
+    function GruntFund (address _creator) public {
+        totalTimeList.push(_creator);
         totalTime[address(this)] = 1;
-        totalTime[msg.sender] = 1;
+        totalTime[_creator] = 1;
     }
 
     mapping (uint => Deliverable) public pendingDeliverables;
@@ -30,8 +42,7 @@ contract GruntFund {
     address[] public totalTimeList;
 
     function getVersion() public pure returns (string) {
-                    return "version 0.0.4";
-
+        return "version 0.0.5";
     }
 
     function getPendingDeliverableList() public view returns (uint[]) {
@@ -47,7 +58,6 @@ contract GruntFund {
         pendingDeliverables[_id].completed,
         pendingDeliverables[_id].rejects,
         pendingDeliverables[_id].rejected
-
         );
     }
     
@@ -59,21 +69,39 @@ contract GruntFund {
             id: id,
             approvals: 0,
             rejects: 0,
-            completed: false, 
+            completed: false,
             rejected: false
-
         });
         pendingDeliverables[id] = newTask;
         pendingDeliverableList.push(id);
     }
-     /// @author Sumukh
+
+// @notice this is a map with each grunt and their hours
+    function getSummaryList() public view returns (address[]) {
+        return totalTimeList;
+    }
+
+    // @notice this is an array of all the grunts
+    function getSummary(address _id) public view returns (uint) {
+        return totalTime[_id];
+    }
+
+    // @notice get contract balance
+    function getBalance() public view returns (uint) {
+        return address(this).balance;
+    }
+
+
+    /// @author Sumukh
     /// @notice Approving based on weight. 3 requires allow to check if the person voting is a grunt, if the task is completed and if has already voted.
     /// @return true if Bugs will eat it, false otherwise
-    function approveDeliverable(uint _deliverableId) public returns(address) {
-        
+    function approveDeliverable(uint _deliverableId) public returns (address) {
         Deliverable storage existingTask = pendingDeliverables[_deliverableId];
+        // @notice you must be a grunt to approve
         require(totalTime[msg.sender]>=1);
+        // @notice the task can't be complete or rejected
         require(!existingTask.completed && !existingTask.rejected);
+        // @notice you can't approve a task more than once
         require(!existingTask.voted[msg.sender]);
         existingTask.approvals += totalTime[msg.sender];
         existingTask.voted[msg.sender] = true;
@@ -82,7 +110,6 @@ contract GruntFund {
         return existingTask.createdBy;
     }
     function rejectDeliverable(uint _deliverableId) public returns(address) {
-        
         Deliverable storage existingTask = pendingDeliverables[_deliverableId];
         require(totalTime[msg.sender]>=1);
         require(!existingTask.completed && !existingTask.rejected);
@@ -97,23 +124,18 @@ contract GruntFund {
     function finalise(uint _deliverableId, address _createdBy) private {
         if (pendingDeliverables[_deliverableId].approvals > (totalTime[address(this)]/2)) {
             totalTime[address(this)] += 2;
-            totalTime[_createdBy] += 2;
-            totalTimeList.push(_createdBy);
+            
+            if (totalTime[_createdBy] == 0){
+                // @notice if the task was done by a new grunt and their address to the totalTimeList
+                totalTime[_createdBy] += 2;
+                totalTimeList.push(_createdBy); 
+            }else {
+                totalTime[_createdBy] += 2;
+            }
             pendingDeliverables[_deliverableId].completed = true;
         } else if (pendingDeliverables[_deliverableId].rejects > (totalTime[address(this)]/2)) {
             pendingDeliverables[_deliverableId].rejected = true;
         }
     }
 
-    function getSummaryList() public view returns (address[]) {
-        return totalTimeList;
-    }
-
-    function getSummary(address _id) public view returns (uint) {
-        return totalTime[_id];
-    }
-
-    function getBalance() public view returns (uint) {
-        return address(this).balance;
-    }
 }
