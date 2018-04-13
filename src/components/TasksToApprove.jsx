@@ -4,7 +4,7 @@ import { compose, withHandlers } from 'recompose';
 import { projectInstance } from '../instances';
 import web3 from '../web3';
 
-const Tasks = ({ tasks, approveTask, address }) => {
+const Tasks = ({ tasks, approveTask, address, rejectTask }) => {
   return (
     <div className="pa4">
       <h2 className="App-title f3 tc">Work To Approve</h2>
@@ -27,21 +27,15 @@ const Tasks = ({ tasks, approveTask, address }) => {
                 <tr key={index}>
                   <td className="pv3 pr3 bb b--black-20">{task[1]}</td>
                   <td className="pv3 pr3 bb b--black-20" />
-                  <td className="pv3 pr3 bb b--black-20">{task[0]}</td>
-                  <td className="pv3 pr3 bb b--black-20">{task[3]}</td>
                   <td className="pv3 pr3 bb b--black-20">
-                    <Button
-                      type="primary"
-                      onClick={() => approveTask(task[2])}
-                      className="mt3"
-                    >
+                    <span className="w3 truncate dib">{task[0]}</span>
+                  </td>
+                  <td className="pv3 pr3 bb b--black-20">{task[3]}</td>
+                  <td className="pv3 pr3 bb b--black-20 flex jca">
+                    <Button type="primary" onClick={() => approveTask(task[2])}>
                       Approve
                     </Button>
-                    <Button
-                      onClick={() => {}}
-                      className="mt3 ml3"
-                      type="danger"
-                    >
+                    <Button onClick={() => rejectTask(task[2])} type="danger">
                       Reject
                     </Button>
                   </td>
@@ -61,6 +55,19 @@ export default compose(
         const accounts = await web3.eth.getAccounts();
         await projectInstance(address)
           .methods.approveDeliverable(taskId)
+          .send({
+            from: accounts[0]
+          });
+        await getTasks();
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    rejectTask: ({ getTasks, address }) => async taskId => {
+      try {
+        const accounts = await web3.eth.getAccounts();
+        await projectInstance(address)
+          .methods.rejectDeliverable(taskId)
           .send({
             from: accounts[0]
           });
